@@ -1,14 +1,25 @@
 #include <iostream>
 #include <cassert>
+#include <csignal>
 
 #include <http.hpp>
 
 bool requestListener(http::request &req) {
-	return req.respond_string(200, http::content_type::TEXT_PLAIN, "Testing...");
+	req.response().setStatus(200);
+	req.response().setContentType(http::content_type::TEXT_PLAIN);
+
+	req.response().setHeader("Access-Control-Allow-Origin", "*");
+
+	req.response().setContentString("Hello, World!");
+	return req.response().send();
 }
 
-bool dispatchInternalServerError(http::request &req) {
-	return req.respond_string(500, http::content_type::TEXT_PLAIN, "500 Internal server error");
+bool dispatchError(http::request &req, int code, const std::string error) {
+	req.response().setStatus(code);
+	req.response().setContentType(http::content_type::TEXT_PLAIN);
+
+	req.response().setContentString(error);
+	return req.response().send();
 }
 
 void usage(const std::string &programName) { std::cerr << "Usage: " << programName << " <port>" << std::endl; }
@@ -46,7 +57,10 @@ int main(int argc, char const *argv[]) {
 
 	http::host host = http::host::local;
 
-	http::server server(requestListener, dispatchInternalServerError);
+	http::server server(requestListener, dispatchError);
+
+	for (const auto &sig : {SIGINT, SIGTERM, SIGQUIT, SIGILL, SIGABRT, SIGFPE, SIGSEGV, SIGBUS, SIGSYS, SIGPIPE})
+		std::signal(sig, http::server::stopAllInstances);
 
 	server.listen(
 		host, port,
