@@ -19,6 +19,10 @@ build/%.o: %.cpp | build
 http-libs:
 	make -f http-server/Makefile all SRCDIR=http-server/src
 
+.PHONY: test
+test: server
+	./server 8080
+
 .PHONY: clean
 clean:
 	@FILES=$$(git clean -ndX); \
