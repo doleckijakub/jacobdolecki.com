@@ -6,8 +6,8 @@ CPPFLAGS := -I http-server/src
 CXXFLAGS := -Wall -Wextra -Wswitch-enum -pedantic -O2
 LDFLAGS :=
 
-server: main.cpp build/http.o
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $^ $(LDFLAGS)
+server: main.cpp http-libs
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $< build/*.o $(LDFLAGS)
 
 build:
 	mkdir -p build
@@ -15,8 +15,9 @@ build:
 build/%.o: %.cpp | build
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
 
-build/http.o:
-	make -f http-server/Makefile $@ SRCDIR=http-server/src
+.PHONY: http-libs
+http-libs:
+	make -f http-server/Makefile all SRCDIR=http-server/src
 
 .PHONY: clean
 clean:
