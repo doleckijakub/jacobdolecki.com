@@ -2,23 +2,32 @@
 #include <cassert>
 #include <csignal>
 
+#include <filesystem>
+namespace fs = std::filesystem;
+const static fs::path staticResourcesFolder = "static";
+
 #include <http.hpp>
 
+using namespace std::string_literals;
+
 bool requestListener(http::request &req) {
-	req.response().setStatus(200);
-	req.response().setContentType(http::content_type::TEXT_PLAIN);
+	size_t i = 0;
+	const auto &path = req.url.path;
 
-	req.response().setHeader("Access-Control-Allow-Origin", "*");
+	auto filepath = staticResourcesFolder;
 
-	req.response().setContentString("Hello, World!");
-	return req.response().send();
+	while (i < path.size()) {
+		filepath /= path[i++];
+	}
+
+	return req.response().sendFile(filepath);
 }
 
 bool dispatchError(http::request &req, int code, const std::string error) {
 	req.response().setStatus(code);
-	req.response().setContentType(http::content_type::TEXT_PLAIN);
+	req.response().setContentType(http::content_type::TEXT_HTML);
 
-	req.response().setContentString(error);
+	req.response().setContentString("<h1>Error "s + std::to_string(code) + "</h1>"s + error);
 	return req.response().send();
 }
 
