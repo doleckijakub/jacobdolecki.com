@@ -1,3 +1,6 @@
 [submodule "http-server"]
 	path = http-server
 	url = https://github.com/doleckijakub/http-server
+[submodule "html-builder"]
+	path = html-builder
+	url = https://github.com/doleckijakub/html-builder

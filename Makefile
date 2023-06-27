@@ -2,11 +2,11 @@ CXX ?= g++
 
 default: server
 
-CPPFLAGS := -I http-server/src
+CPPFLAGS := -I http-server/src -I html-builder/src
 CXXFLAGS := -Wall -Wextra -Wswitch-enum -pedantic -O2
 LDFLAGS :=
 
-server: main.cpp http-libs
+server: main.cpp libs
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $< build/*.o $(LDFLAGS)
 
 build:
@@ -15,9 +15,16 @@ build:
 build/%.o: %.cpp | build
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
 
+.PHONY: libs
+libs: http-libs html-builder-libs
+
 .PHONY: http-libs
 http-libs:
 	make -f http-server/Makefile all SRCDIR=http-server/src
+
+.PHONY: html-builder-libs
+html-builder-libs:
+	make -f html-builder/Makefile all SRCDIR=html-builder/src
 
 .PHONY: test
 test: server
