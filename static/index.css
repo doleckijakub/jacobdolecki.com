@@ -1,0 +1,70 @@
+body {
+	background-color: #0f0f0f;
+
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+
+	font-size: 17px;
+	font-family: 'Ubuntu Mono', monospace;
+	font-weight: bold;
+	color: white;
+}
+
+@keyframes rainbow {
+	0% {
+		color: red;
+	}
+
+	14% {
+		color: orange;
+	}
+
+	28% {
+		color: yellow;
+	}
+
+	42% {
+		color: green;
+	}
+
+	57% {
+		color: blue;
+	}
+
+	71% {
+		color: indigo;
+	}
+
+	85% {
+		color: violet;
+	}
+
+	100% {
+		color: red;
+	}
+}
+
+#fortune {
+	display: block;
+	position: absolute;
+
+	right: 1rem;
+	bottom: 1rem;
+}
+
+.terminal::before {
+	content: "$ ";
+	animation: rainbow 10s linear infinite;
+}
+
+main {
+	display: block;
+	position: absolute;
+
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+
+	width: max(250px, 20vw);
+}
