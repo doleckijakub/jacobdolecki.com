@@ -4,6 +4,7 @@
 
 #include <filesystem>
 namespace fs = std::filesystem;
+static fs::path baseDirectory = ".";
 const static fs::path staticResourcesFolder = "static";
 
 #include <http.hpp>
@@ -90,13 +91,13 @@ bool serve_GET(http::request &req) {
 	size_t i = 0;
 	const auto &path = req.url.path;
 
-	auto filepath = staticResourcesFolder;
+	auto filepath = baseDirectory / staticResourcesFolder;
 
 	while (i < path.size()) {
 		filepath /= path[i++];
 	}
 
-	return req.response().sendFile(filepath);
+	return req.response().sendFile(filepath, req.url.pathname);
 }
 
 bool requestListener(http::request &req) {
@@ -139,6 +140,13 @@ int main(int argc, char const *argv[]) {
 	};
 
 	std::string programName = next_arg();
+
+	try {
+		baseDirectory = fs::path(programName).parent_path();
+	} catch (std::exception &err) {
+		std::cerr << "Warning: Failed to retrieve base directory of the executable, defaulting to: " << baseDirectory
+				  << std::endl;
+	}
 
 	uint16_t port;
 
