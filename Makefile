@@ -2,18 +2,21 @@ CXX ?= g++
 
 default: server
 
-CPPFLAGS := -I http-server/src -I html-builder/src
+CPPFLAGS := -I . -I http-server/src -I html-builder/src
 CXXFLAGS := -Wall -Wextra -Wswitch-enum -pedantic -O2
 LDFLAGS :=
 
-server: main.cpp libs
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $< build/*.o $(LDFLAGS)
+server: main.cpp libs endpoints
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o $@ $< `find build -type f -name "*.o"` $(LDFLAGS)
 
 build:
 	mkdir -p build
 
 build/%.o: %.cpp | build
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
+
+.PHONY: endpoints
+endpoints: build/endpoint-base.o build/endpoint-dispatcher.o
 
 .PHONY: libs
 libs: http-libs html-builder-libs
