@@ -1,5 +1,8 @@
 #include "endpoint-base.hpp"
 
+namespace endpoint {
+namespace index {
+
 static html::div fortune() {
 	auto div = html::div();
 
@@ -16,9 +19,6 @@ static html::div fortune() {
 
 	return div;
 }
-
-namespace endpoint {
-namespace index {
 
 endpointDispatchResult serve(http::request &req) {
 	if (req.url.path.size() != 0)
