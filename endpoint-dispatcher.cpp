@@ -6,10 +6,14 @@
 
 // endpoints
 #include "endpoints/index.cpp"
+#include "endpoints/services.cpp"
 
 static std::unordered_map<std::string, std::function<endpointDispatchResult(http::request &)>> endpoints;
 
-static void bakeEndpoints() { endpoints.insert_or_assign("/", endpoint::index::serve); }
+static void bakeEndpoints() {
+	endpoints.insert_or_assign("/", endpoint::index::serve);
+	endpoints.insert_or_assign("/services", endpoint::services::serve);
+}
 
 endpointDispatchResult tryDispatchEndpoint(http::request &req) {
 	if (!endpoints.size())

@@ -15,6 +15,14 @@ build:
 build/%.o: %.cpp | build
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
 
+ENDPOINTS := $(shell find endpoints -type f)
+build/endpoint-dispatcher.o: endpoint-dispatcher.cpp $(ENDPOINTS) | build
+	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
+
+.PHONY: list-endpoints
+list-endpoints:
+	echo $(ENDPOINTS)
+
 .PHONY: endpoints
 endpoints: build/endpoint-base.o build/endpoint-dispatcher.o
 
